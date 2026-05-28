@@ -1,0 +1,495 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trattoria della Nonna</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --cream: #F5EFE0; --warm-dark: #1C1208; --terracotta: #C4622D;
+    --olive: #6B7A2A; --gold: #C9983A; --text-muted: #6B5B42;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--warm-dark); overflow-x: hidden; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(40px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+  @keyframes slideLeft{ from { opacity:0; transform:translateX(60px); } to { opacity:1; transform:translateX(0); } }
+  @keyframes slideRight{from { opacity:0; transform:translateX(-60px);} to { opacity:1; transform:translateX(0); } }
+  @keyframes scaleIn  { from { opacity:0; transform:scale(0.92); } to { opacity:1; transform:scale(1); } }
+  @keyframes kenBurns { from { transform:scale(1); } to { transform:scale(1.08); } }
+  @keyframes floatUp  { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+  @keyframes shimmer  { 0%{background-position:-200% center;} 100%{background-position:200% center;} }
+  @keyframes lineGrow { from{width:0;} to{width:100%;} }
+  @keyframes revealUp { from{clip-path:inset(100% 0 0 0);} to{clip-path:inset(0% 0 0 0);} }
+
+  .anim-fade-up    { opacity:0; animation: fadeUp 0.9s cubic-bezier(.22,1,.36,1) forwards; }
+  .anim-fade-in    { opacity:0; animation: fadeIn 1s ease forwards; }
+  .anim-slide-left { opacity:0; animation: slideLeft 0.9s cubic-bezier(.22,1,.36,1) forwards; }
+  .anim-slide-right{ opacity:0; animation: slideRight 0.9s cubic-bezier(.22,1,.36,1) forwards; }
+  .anim-scale-in   { opacity:0; animation: scaleIn 0.8s cubic-bezier(.22,1,.36,1) forwards; }
+  .d1{animation-delay:.1s} .d2{animation-delay:.25s} .d3{animation-delay:.4s}
+  .d4{animation-delay:.55s} .d5{animation-delay:.7s} .d6{animation-delay:.85s}
+
+  /* scroll reveal */
+  .reveal { opacity:0; transform:translateY(30px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.22,1,.36,1); }
+  .reveal.visible { opacity:1; transform:none; }
+  .reveal-left  { opacity:0; transform:translateX(-40px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.22,1,.36,1); }
+  .reveal-left.visible  { opacity:1; transform:none; }
+  .reveal-right { opacity:0; transform:translateX(40px);  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.22,1,.36,1); }
+  .reveal-right.visible { opacity:1; transform:none; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0; width:100%; z-index:200;
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 1.2rem 4rem;
+    background: rgba(245,239,224,0);
+    backdrop-filter: blur(0px);
+    border-bottom: 1px solid transparent;
+    transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(245,239,224,0.95);
+    backdrop-filter: blur(12px);
+    border-color: rgba(196,98,45,0.15);
+  }
+  .nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; letter-spacing:0.04em; color:var(--cream); transition:color 0.4s; }
+  nav.scrolled .nav-logo { color: var(--terracotta); }
+  .nav-logo span { font-style:italic; font-weight:300; }
+  .nav-links { display:flex; gap:2.5rem; list-style:none; }
+  .nav-links a { font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(245,239,224,0.85); text-decoration:none; transition:color 0.2s; position:relative; }
+  .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--gold); transition:width 0.3s; }
+  .nav-links a:hover::after { width:100%; }
+  nav.scrolled .nav-links a { color:var(--warm-dark); }
+  .nav-links a:hover { color:var(--terracotta); }
+  nav.scrolled .nav-links a:hover { color:var(--terracotta); }
+  .nav-cta { background:var(--terracotta); color:white; border:none; padding:0.6rem 1.6rem; font-family:'Jost',sans-serif; font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:background 0.2s, transform 0.15s; }
+  .nav-cta:hover { background:#a3501f; transform:translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh; position:relative; overflow:hidden;
+    display:flex; align-items:center;
+  }
+  .hero-bg {
+    position:absolute; inset:0; z-index:0;
+    background: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=80') center/cover no-repeat;
+    animation: kenBurns 20s ease-in-out infinite alternate;
+  }
+  .hero-bg::after {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(100deg, rgba(28,18,8,0.82) 0%, rgba(28,18,8,0.45) 60%, rgba(28,18,8,0.2) 100%);
+  }
+  .hero-content {
+    position:relative; z-index:1;
+    padding: 8rem 6rem; max-width:720px;
+  }
+  .hero-eyebrow { font-size:0.72rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:1.5rem; display:flex; align-items:center; gap:1rem; }
+  .hero-eyebrow::before { content:''; display:block; width:2rem; height:1px; background:var(--gold); }
+  .hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(4rem,6vw,7rem); line-height:1.02; font-weight:300; color:var(--cream); margin-bottom:1.5rem; }
+  .hero-title em { font-style:italic; color:var(--gold); display:block; }
+  .hero-sub { font-size:1rem; line-height:1.85; color:rgba(245,239,224,0.7); max-width:42ch; margin-bottom:2.5rem; font-weight:300; }
+  .hero-actions { display:flex; gap:1rem; }
+  .btn-primary { background:var(--terracotta); color:white; border:none; padding:0.95rem 2.4rem; font-family:'Jost',sans-serif; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:background 0.2s, transform 0.15s; }
+  .btn-primary:hover { background:#a3501f; transform:translateY(-2px); }
+  .btn-ghost { background:transparent; color:var(--cream); border:1px solid rgba(245,239,224,0.5); padding:0.95rem 2.4rem; font-family:'Jost',sans-serif; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; }
+  .btn-ghost:hover { background:rgba(245,239,224,0.1); border-color:var(--gold); color:var(--gold); }
+
+  .hero-scroll { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); z-index:2; display:flex; flex-direction:column; align-items:center; gap:0.5rem; animation:floatUp 2.5s ease-in-out infinite; }
+  .hero-scroll span { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(245,239,224,0.4); }
+  .hero-scroll-line { width:1px; height:50px; background:linear-gradient(to bottom, rgba(245,239,224,0.5), transparent); }
+
+  /* badges strip */
+  .badges-strip { background:var(--warm-dark); padding:1.5rem 4rem; display:flex; justify-content:center; gap:4rem; align-items:center; border-bottom:1px solid rgba(201,152,58,0.2); }
+  .badge-item { display:flex; align-items:center; gap:0.8rem; }
+  .badge-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+  .badge-text { font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(245,239,224,0.55); }
+
+  /* ── ABOUT ── */
+  .about { display:grid; grid-template-columns:1fr 1fr; max-width:1200px; margin:0 auto; padding:7rem 2rem; gap:5rem; align-items:center; }
+  .about-img-wrap { position:relative; }
+  .about-img {
+    width:100%; aspect-ratio:4/5; object-fit:cover;
+    display:block;
+    transition: transform 0.6s ease;
+  }
+  .about-img-wrap:hover .about-img { transform: scale(1.03); }
+  .about-img-wrap { overflow:hidden; }
+  .about-year { position:absolute; bottom:-1.5rem; right:-1.5rem; width:130px; height:130px; background:var(--warm-dark); color:var(--cream); display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; z-index:1; }
+  .about-year .year { font-size:2.2rem; font-weight:600; line-height:1; }
+  .about-year .since { font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; opacity:0.6; }
+  .about-text { padding-left:1rem; }
+  .section-label { font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--terracotta); margin-bottom:1rem; }
+  .section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.2rem,3vw,3.2rem); font-weight:300; line-height:1.2; margin-bottom:1.5rem; }
+  .section-title em { font-style:italic; color:var(--terracotta); }
+  .body-text { font-size:0.95rem; line-height:1.9; color:var(--text-muted); font-weight:300; margin-bottom:1rem; }
+  .stats-row { margin-top:2rem; display:flex; gap:3rem; padding-top:2rem; border-top:1px solid rgba(196,98,45,0.2); }
+  .stat-num { font-family:'Cormorant Garamond',serif; font-size:2.5rem; font-weight:300; color:var(--terracotta); line-height:1; }
+  .stat-label { font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin-top:0.3rem; }
+
+  /* ── GALLERY STRIP ── */
+  .gallery-strip { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; height:420px; overflow:hidden; }
+  .gallery-strip img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.7s ease, filter 0.4s; filter:brightness(0.88); }
+  .gallery-strip img:hover { transform:scale(1.06); filter:brightness(1); }
+
+  /* ── MENU ── */
+  .menu-section { background:var(--warm-dark); color:var(--cream); padding:7rem 4rem; }
+  .menu-header { text-align:center; margin-bottom:4rem; }
+  .menu-header .section-label { color:var(--gold); }
+  .menu-header .section-title { color:var(--cream); font-size:clamp(2.2rem,3.5vw,3.8rem); }
+  .menu-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0; max-width:1100px; margin:0 auto; }
+  .menu-item { padding:2.5rem 2rem; border:1px solid rgba(201,152,58,0.15); position:relative; transition:background 0.3s; overflow:hidden; }
+  .menu-item::before { content:''; position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--gold); transition:width 0.4s; }
+  .menu-item:hover { background:rgba(201,152,58,0.07); }
+  .menu-item:hover::before { width:100%; }
+  .menu-img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; margin-bottom:1.5rem; opacity:0.85; transition:opacity 0.3s, transform 0.5s; }
+  .menu-item:hover .menu-img { opacity:1; transform:scale(1.03); }
+  .menu-item { overflow:hidden; }
+  .menu-category { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
+  .menu-name { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:400; margin-bottom:0.5rem; font-style:italic; }
+  .menu-desc { font-size:0.82rem; line-height:1.7; color:rgba(245,239,224,0.5); font-weight:300; margin-bottom:1.2rem; }
+  .menu-price { font-size:1rem; color:var(--gold); font-weight:300; }
+
+  /* ── DIVIDER ── */
+  .ornament { text-align:center; padding:2.5rem; color:var(--terracotta); font-family:'Cormorant Garamond',serif; font-size:1.4rem; letter-spacing:0.3em; opacity:0.5; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials { padding:6rem 4rem; background:#EFE7D3; }
+  .testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; max-width:1100px; margin:0 auto; }
+  .testi-card { background:var(--cream); padding:2rem; border-left:3px solid var(--terracotta); transition:transform 0.3s, box-shadow 0.3s; }
+  .testi-card:hover { transform:translateY(-4px); box-shadow:0 8px 30px rgba(0,0,0,0.08); }
+  .stars { color:var(--gold); font-size:0.9rem; margin-bottom:1rem; letter-spacing:0.1em; }
+  .testi-text { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-style:italic; line-height:1.7; color:var(--warm-dark); margin-bottom:1.2rem; }
+  .testi-author { font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); }
+
+  /* ── PARALLAX QUOTE ── */
+  .quote-section {
+    position:relative; overflow:hidden; padding:9rem 4rem;
+    background:url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1800&q=80') center/cover no-repeat fixed;
+    text-align:center;
+  }
+  .quote-section::after { content:''; position:absolute; inset:0; background:rgba(28,18,8,0.72); }
+  .quote-content { position:relative; z-index:1; max-width:800px; margin:0 auto; }
+  .quote-mark { font-family:'Cormorant Garamond',serif; font-size:8rem; line-height:0.6; color:var(--gold); opacity:0.4; }
+  .quote-text { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,3vw,2.5rem); font-style:italic; font-weight:300; color:var(--cream); line-height:1.5; margin:1rem 0; }
+  .quote-author { font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-top:1.5rem; }
+
+  /* ── RESERVATION ── */
+  .reservation { padding:7rem 4rem; display:grid; grid-template-columns:1fr 1fr; gap:6rem; max-width:1200px; margin:0 auto; }
+  .res-info { margin-top:2.5rem; display:flex; flex-direction:column; gap:1.2rem; }
+  .res-info-item { display:flex; gap:1rem; align-items:flex-start; }
+  .res-info-icon { width:38px; height:38px; background:var(--terracotta); display:flex; align-items:center; justify-content:center; color:white; font-size:0.9rem; flex-shrink:0; }
+  .res-info-label { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.2rem; }
+  .res-info-value { font-size:0.92rem; color:var(--warm-dark); }
+  .res-form { display:flex; flex-direction:column; gap:1rem; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .form-group { display:flex; flex-direction:column; gap:0.4rem; }
+  .form-group label { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); }
+  .form-group input, .form-group select, .form-group textarea { background:white; border:1px solid rgba(0,0,0,0.12); padding:0.75rem 1rem; font-family:'Jost',sans-serif; font-size:0.88rem; color:var(--warm-dark); outline:none; transition:border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--terracotta); }
+  .form-group textarea { resize:vertical; min-height:80px; }
+
+  /* ── FOOTER ── */
+  footer { background:var(--warm-dark); color:rgba(245,239,224,0.6); padding:4rem 6rem 2rem; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem; }
+  .footer-brand .nav-logo-f { display:block; margin-bottom:1rem; font-size:1.3rem; font-family:'Cormorant Garamond',serif; font-weight:600; color:var(--terracotta); }
+  .footer-brand .nav-logo-f span { font-style:italic; font-weight:300; }
+  .footer-desc { font-size:0.83rem; line-height:1.8; font-weight:300; }
+  .footer-col h4 { font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:1.2rem; }
+  .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:0.6rem; }
+  .footer-col ul a { font-size:0.83rem; color:rgba(245,239,224,0.5); text-decoration:none; transition:color 0.2s; }
+  .footer-col ul a:hover { color:var(--cream); }
+  .footer-bottom { border-top:1px solid rgba(245,239,224,0.1); padding-top:1.5rem; margin-top:3rem; font-size:0.75rem; opacity:0.4; text-align:center; grid-column:1/-1; }
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <div class="nav-logo">Trattoria <span>della Nonna</span></div>
+  <ul class="nav-links">
+    <li><a href="#about">Über uns</a></li>
+    <li><a href="#menu">Speisekarte</a></li>
+    <li><a href="#reservation">Reservierung</a></li>
+    <li><a href="#contact">Kontakt</a></li>
+  </ul>
+  <button class="nav-cta">Tisch reservieren</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow anim-fade-up">Cucina Italiana dal 1987</p>
+    <h1 class="hero-title anim-fade-up d1">
+      La <em>cucina</em><br>di una volta
+    </h1>
+    <p class="hero-sub anim-fade-up d2">Authentische italienische Küche, zubereitet mit Rezepten aus vier Generationen und den besten Zutaten aus der Toskana.</p>
+    <div class="hero-actions anim-fade-up d3">
+      <button class="btn-primary">Speisekarte entdecken</button>
+      <button class="btn-ghost">Reservierung</button>
+    </div>
+  </div>
+  <div class="hero-scroll anim-fade-in d5">
+    <span>Scrollen</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- BADGES -->
+<div class="badges-strip">
+  <div class="badge-item reveal"><div class="badge-dot"></div><span class="badge-text">Täglich frische Pasta</span></div>
+  <div class="badge-item reveal d1"><div class="badge-dot"></div><span class="badge-text">Zutaten aus der Toskana</span></div>
+  <div class="badge-item reveal d2"><div class="badge-dot"></div><span class="badge-text">Familienrezepte seit 1987</span></div>
+  <div class="badge-item reveal d3"><div class="badge-dot"></div><span class="badge-text">Hausgemachter Wein</span></div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-img-wrap reveal-left">
+    <img class="about-img" src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80" alt="Küche der Trattoria">
+    <div class="about-year">
+      <span class="year">37</span>
+      <span class="since">Jahre Leidenschaft</span>
+    </div>
+  </div>
+  <div class="about-text reveal-right">
+    <p class="section-label">La Nostra Storia</p>
+    <h2 class="section-title">Kochen ist<br><em>Liebe</em> in Aktion</h2>
+    <p class="body-text">Seit 1987 führt die Familie Moretti dieses Restaurant mit einer einzigen Überzeugung: Gutes Essen entsteht nur aus guten Zutaten, echter Leidenschaft und viel Zeit.</p>
+    <p class="body-text">Unsere Pasta wird täglich frisch von Hand gemacht. Die Tomaten kommen aus dem eigenen Garten in der Toskana. Das Rezept für unser Nonna-Tiramisu ist seit vier Generationen unverändert.</p>
+    <div class="stats-row">
+      <div class="reveal d1">
+        <div class="stat-num">37</div>
+        <div class="stat-label">Jahre Erfahrung</div>
+      </div>
+      <div class="reveal d2">
+        <div class="stat-num">48</div>
+        <div class="stat-label">Gerichte</div>
+      </div>
+      <div class="reveal d3">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Frisch täglich</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY STRIP -->
+<div class="gallery-strip">
+  <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=900&q=80" alt="Rustikales Interieur">
+  <img src="https://images.unsplash.com/photo-1516100882582-96c3a05fe590?w=500&q=80" alt="Frische Pasta">
+  <img src="https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=500&q=80" alt="Wein">
+  <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&q=80" alt="Pizza">
+</div>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="menu-header">
+    <p class="section-label reveal">Il Nostro Menu</p>
+    <h2 class="section-title reveal d1">Unsere <em style="font-style:italic;">Lieblingsgerichte</em></h2>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-item reveal d1">
+      <img class="menu-img" src="https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=600&q=80" alt="Bruschetta">
+      <p class="menu-category">Antipasto</p>
+      <p class="menu-name">Bruschetta al Pomodoro</p>
+      <p class="menu-desc">Geröstetes Sauerteigbrot mit reifen Tomaten, frischem Basilikum und nativem Olivenöl extra aus der Toskana.</p>
+      <p class="menu-price">€ 8,50</p>
+    </div>
+    <div class="menu-item reveal d2">
+      <img class="menu-img" src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80" alt="Tagliatelle Ragù">
+      <p class="menu-category">Primo</p>
+      <p class="menu-name">Tagliatelle al Ragù</p>
+      <p class="menu-desc">Handgemachte Eiernudeln mit langsam geschmortem Rindfleisch-Ragù nach Nonnas Originalrezept.</p>
+      <p class="menu-price">€ 17,90</p>
+    </div>
+    <div class="menu-item reveal d3">
+      <img class="menu-img" src="https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=600&q=80" alt="Risotto ai Funghi">
+      <p class="menu-category">Primo</p>
+      <p class="menu-name">Risotto ai Funghi</p>
+      <p class="menu-desc">Cremiges Carnaroli-Risotto mit Steinpilzen, Trüffelöl und 36 Monate gereiftem Parmigiano Reggiano.</p>
+      <p class="menu-price">€ 19,50</p>
+    </div>
+    <div class="menu-item reveal d1">
+      <img class="menu-img" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80" alt="Saltimbocca">
+      <p class="menu-category">Secondo</p>
+      <p class="menu-name">Saltimbocca alla Romana</p>
+      <p class="menu-desc">Zartes Kalbsfilet mit Prosciutto di Parma und frischem Salbei in Weißwein-Buttersoße.</p>
+      <p class="menu-price">€ 26,00</p>
+    </div>
+    <div class="menu-item reveal d2">
+      <img class="menu-img" src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80" alt="Branzino">
+      <p class="menu-category">Secondo</p>
+      <p class="menu-name">Branzino al Forno</p>
+      <p class="menu-desc">Wolfsbarsch aus dem Ofen mit Kapern, Oliven, Kirschtomaten und frischen Kräutern der Provence.</p>
+      <p class="menu-price">€ 28,50</p>
+    </div>
+    <div class="menu-item reveal d3">
+      <img class="menu-img" src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&q=80" alt="Tiramisu">
+      <p class="menu-category">Dolce</p>
+      <p class="menu-name">Tiramisù della Nonna</p>
+      <p class="menu-desc">Das unveränderliche Original seit 1987 – Löffelbiskuit, Mascarpone, starker Espresso und Kakao.</p>
+      <p class="menu-price">€ 8,00</p>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:3.5rem;" class="reveal">
+    <button class="btn-ghost" style="border-color:rgba(201,152,58,0.5); color:var(--gold);">Vollständige Speisekarte</button>
+  </div>
+</section>
+
+<div class="ornament reveal">— ✦ —</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div style="text-align:center; margin-bottom:3.5rem;">
+    <p class="section-label reveal" style="color:var(--terracotta);">Was unsere Gäste sagen</p>
+    <h2 class="section-title reveal d1" style="color:var(--warm-dark);">Stimmen aus der <em style="font-style:italic; color:var(--terracotta);">Trattoria</em></h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card reveal d1">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">„Das beste Tiramisu, das ich je gegessen habe. Man schmeckt die Jahrzehnte der Liebe in jedem Löffel."</p>
+      <p class="testi-author">— Maria K., München</p>
+    </div>
+    <div class="testi-card reveal d2">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">„Die Atmosphäre erinnert mich an meine Kindheitsurlaube in der Toskana. Authentisch, herzlich, unvergleichlich."</p>
+      <p class="testi-author">— Thomas W., Hamburg</p>
+    </div>
+    <div class="testi-card reveal d3">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">„Frische handgemachte Pasta, freundliches Personal und ein Ambiente zum Verlieben. Unser fester Tipp!"</p>
+      <p class="testi-author">— Familie Schneider, Berlin</p>
+    </div>
+  </div>
+</section>
+
+<!-- PARALLAX QUOTE -->
+<div class="quote-section">
+  <div class="quote-content reveal">
+    <div class="quote-mark">"</div>
+    <p class="quote-text">La cucina è l'arte dell'amore – denn wer kocht, schenkt von sich selbst.</p>
+    <p class="quote-author">— Nonna Giulia Moretti, 1987</p>
+  </div>
+</div>
+
+<!-- RESERVATION -->
+<section class="reservation" id="reservation">
+  <div class="reveal-left">
+    <p class="section-label">Reservierung</p>
+    <h2 class="section-title">Reservieren Sie Ihren <em>Tisch</em></h2>
+    <p class="body-text">Wir freuen uns auf Ihren Besuch. Gerne reservieren wir Ihnen einen Tisch – für besondere Anlässe auch im privaten Séparée.</p>
+    <div class="res-info">
+      <div class="res-info-item">
+        <div class="res-info-icon">🕐</div>
+        <div>
+          <p class="res-info-label">Öffnungszeiten</p>
+          <p class="res-info-value">Di–So: 12:00–14:30 und 18:00–22:30 Uhr</p>
+        </div>
+      </div>
+      <div class="res-info-item">
+        <div class="res-info-icon">📍</div>
+        <div>
+          <p class="res-info-label">Adresse</p>
+          <p class="res-info-value">Via Roma 14, 12345 Musterstadt</p>
+        </div>
+      </div>
+      <div class="res-info-item">
+        <div class="res-info-icon">📞</div>
+        <div>
+          <p class="res-info-label">Telefon</p>
+          <p class="res-info-value">+49 (0) 123 456 789</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="reveal-right">
+    <div class="res-form">
+      <div class="form-row">
+        <div class="form-group"><label>Vorname</label><input type="text" placeholder="Maria"></div>
+        <div class="form-group"><label>Nachname</label><input type="text" placeholder="Rossi"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Datum</label><input type="date"></div>
+        <div class="form-group"><label>Uhrzeit</label>
+          <select>
+            <option>12:00 Uhr</option><option>12:30 Uhr</option><option>13:00 Uhr</option>
+            <option>18:00 Uhr</option><option>18:30 Uhr</option><option>19:00 Uhr</option>
+            <option>19:30 Uhr</option><option>20:00 Uhr</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Anzahl Personen</label>
+        <select>
+          <option>1 Person</option><option>2 Personen</option><option>3 Personen</option>
+          <option>4 Personen</option><option>5–8 Personen</option><option>Gruppe (8+)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>E-Mail</label><input type="email" placeholder="ihre@email.de"></div>
+      <div class="form-group"><label>Besondere Wünsche</label><textarea placeholder="Geburtstag, Allergie, Séparée..."></textarea></div>
+      <button class="btn-primary" style="margin-top:0.5rem; padding:1rem;">Reservierung bestätigen</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-brand">
+    <span class="nav-logo-f">Trattoria <span>della Nonna</span></span>
+    <p class="footer-desc">Authentische toskanische Küche in Familienhand seit 1987. Weil gutes Essen Zeit braucht – und Liebe.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Navigation</h4>
+    <ul>
+      <li><a href="#">Über uns</a></li><li><a href="#">Speisekarte</a></li>
+      <li><a href="#">Galerie</a></li><li><a href="#">Reservierung</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Angebote</h4>
+    <ul>
+      <li><a href="#">Mittagsmenü</a></li><li><a href="#">Weinauswahl</a></li>
+      <li><a href="#">Catering</a></li><li><a href="#">Séparée</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Kontakt</h4>
+    <ul>
+      <li><a href="#">Via Roma 14</a></li><li><a href="#">+49 123 456 789</a></li>
+      <li><a href="#">info@trattoria.de</a></li><li><a href="#">Instagram</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">© 2024 Trattoria della Nonna · Impressum · Datenschutz</div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        // stagger siblings
+        const siblings = [...e.target.parentElement.children].filter(c => c.classList.contains('reveal') || c.classList.contains('reveal-left') || c.classList.contains('reveal-right'));
+        const idx = siblings.indexOf(e.target);
+        setTimeout(() => e.target.classList.add('visible'), idx * 120);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
+
+
+
