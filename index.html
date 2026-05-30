@@ -65,7 +65,7 @@ body { -webkit-text-size-adjust: 100%; }
   nav.scrolled .nav-logo { color: var(--terracotta); }
   .nav-logo span { font-style:italic; font-weight:300; }
   .nav-links { display:flex; gap:2.5rem; list-style:none; }
-  .nav-links a { font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(245,239,224,0.85); text-decoration:none; transition:color 0.2s; position:relative; }
+  .nav-links a { font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(245,239,224,0.85); text-decoration:none; transition:color 0.2s; position:relative; }
   .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px; background:var(--gold); transition:width 0.3s; }
   .nav-links a:hover::after { width:100%; }
   nav.scrolled .nav-links a { color:var(--warm-dark); }
@@ -73,7 +73,14 @@ body { -webkit-text-size-adjust: 100%; }
   nav.scrolled .nav-links a:hover { color:var(--terracotta); }
   .nav-cta { background:var(--terracotta); color:white; border:none; padding:0.6rem 1.6rem; font-family:'Jost',sans-serif; font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:background 0.2s, transform 0.15s; }
   .nav-cta:hover { background:#a3501f; transform:translateY(-1px); }
-
+  .menu-toggle {
+  font-size: 2.2rem;
+  padding: 0.7rem 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
   /* ── HERO ── */
   .hero {
     min-height: 100svh; position:relative; overflow:hidden;
@@ -377,7 +384,7 @@ nav { padding: 1rem 1rem; }
   position: fixed;
   top: 0;
   right: -100%;
-  width: 100%;
+  width: 30%;
   height: 100vh;
   background: rgba(28,18,8,0.98);
   backdrop-filter: blur(12px);
@@ -514,71 +521,7 @@ nav { padding: 1rem 1rem; }
   color: var(--gold);
 }
 
-/* ===== DESKTOP DROPDOWN MENU ===== */
-.desktop-dropdown {
-  display: flex;
-  gap: 1.5rem;
-  margin-left: auto;
-  align-items: center;
-}
 
-.dropdown {
-  position: relative;
-}
-
-.dropbtn {
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  padding: 0.4rem 0.6rem;
-  transition: color 0.2s;
-}
-
-nav.scrolled .dropbtn {
-  color: var(--warm-dark);
-}
-
-.dropbtn:hover {
-  color: var(--terracotta);
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: rgba(28,18,8,0.95);
-  min-width: 200px;
-  padding: 0.8rem;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-  z-index: 999;
-}
-
-.dropdown-content a {
-  display: block;
-  padding: 0.6rem 0.8rem;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--cream);
-  text-decoration: none;
-}
-
-.dropdown-content a:hover {
-  color: var(--gold);
-}
-
-/* HOVER LOGIK */
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-/* Desktop bleibt unverändert – Mobile bleibt komplett gleich */
 @media (max-width: 768px) {
   .desktop-dropdown {
     display: none;
@@ -591,37 +534,8 @@ nav.scrolled .dropbtn {
 <nav id="mainNav">
   <div class="nav-logo">Trattoria <span>della Nonna</span></div>
 <!-- DESKTOP DROPDOWN MENU (oben rechts) -->
-<div class="desktop-dropdown">
-  <div class="dropdown">
-    <button class="dropbtn">Navigation</button>
-    <div class="dropdown-content">
-      <a href="#about">Über uns</a>
-      <a href="./menu.html">Speisekarte</a>
-      <a href="./gallery.html">Galerie</a>
-      <a href="#reservation">Reservierung</a>
-    </div>
-  </div>
 
-  <div class="dropdown">
-    <button class="dropbtn">Angebote</button>
-    <div class="dropdown-content">
-      <a href="./mittagsmenu.html">Mittagsmenü</a>
-      <a href="./weinauswahl.html">Weinauswahl</a>
-      <a href="./catering.html">Catering</a>
-      <a href="./separee.html">Séparée</a>
-    </div>
-  </div>
 
-  <div class="dropdown">
-    <button class="dropbtn">Kontakt</button>
-    <div class="dropdown-content">
-      <a href="#contact">Adresse</a>
-      <a href="tel:+49123456789">Telefon</a>
-      <a href="mailto:info@trattoria.de">E-Mail</a>
-      <a href="https://instagram.com">Instagram</a>
-    </div>
-  </div>
-</div>
   <ul class="nav-links">
     <li><a href="#about">Über uns</a></li>
     <li><a href="#menu">Speisekarte</a></li>
@@ -991,7 +905,6 @@ function toggleAccordion(btn) {
 </script>
 </body>
 </html>
-
 
 
 
